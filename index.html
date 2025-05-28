@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iridium SBD Technical Support</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    #chat {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      background: #eee;
+      border-radius: 5px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🛰️ Iridium SBD Technical Support</h2>
+  <div id="chat"></div>
+
+  <input type="text" id="userInput" placeholder="Ask about Iridium SBD services..." />
+  <button onclick="sendMessage()">Send</button>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("userInput");
+      const chat = document.getElementById("chat");
+      const userMessage = input.value.trim();
+      
+      if (!userMessage) return;
+
+      // Show user message
+      chat.innerHTML += `<div class="message"><strong>You:</strong> ${userMessage}</div>`;
+      input.value = "";
+
+      // Send to your RAG assistant
+      const response = await fetch("https://0c85-104-196-192-5.ngrok-free.app/api/predict ", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: [userMessage] })
+      });
+
+      const result = await response.json();
+
+      // Show assistant message
+      const botReply = result.response || "⚠️ No response received.";
+      chat.innerHTML += `<div class="message"><strong>Assistant:</strong> ${botReply}</div>`;
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    // Optional: allow pressing Enter to send
+    document.getElementById("userInput").addEventListener("keypress", function(e) {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+
+</body>
+</html>
